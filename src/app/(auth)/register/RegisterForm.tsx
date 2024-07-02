@@ -1,4 +1,5 @@
 "use client";
+import { registerUser } from "@/src/actions/authActions";
 import {
   RegisterSchema,
   registerSchema,
@@ -13,14 +14,28 @@ const RegisterForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    setError,
+    formState: { errors, isValid, isSubmitting },
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
     mode: "onTouched",
   });
 
-  const submitHandler = (data: RegisterSchema) => {
-    console.log(data);
+  const submitHandler = async (data: RegisterSchema) => {
+    const result = await registerUser(data);
+
+    if (result.status === "success") {
+      console.log("User created successfully");
+    } else {
+      if (Array.isArray(result.error)) {
+        result.error.forEach((e) => {
+          const path = e.path.join(".") as "email" | "password" | "name";
+          setError(path, { message: e.message });
+        });
+      } else {
+        setError("root.serverError", { message: result.error });
+      }
+    }
   };
 
   return (
@@ -62,7 +77,13 @@ const RegisterForm = () => {
               errorMessage={errors.password?.message}
               {...register("password")}
             />
+            {errors.root?.serverError && (
+              <p className="text-danger text-sm">
+                {errors.root.serverError.message}
+              </p>
+            )}
             <Button
+              isLoading={isSubmitting}
               fullWidth
               color="secondary"
               type="submit"
