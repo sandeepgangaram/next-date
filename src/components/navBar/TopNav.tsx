@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import React from "react";
 import { GiMatchTip } from "react-icons/gi";
+import NavLink from "./NavLink";
 
 const TopNav = () => {
   return (
@@ -15,7 +16,12 @@ const TopNav = () => {
       maxWidth="xl"
       className="bg-gradient-to-r from-purple-400 to-purple-700"
       classNames={{
-        item: ["text-xl", "text-white", "uppercase"],
+        item: [
+          "text-xl",
+          "text-white",
+          "uppercase",
+          "data-[active=true]:text-yellow-200",
+        ],
       }}
     >
       <NavbarBrand as={Link} href="/">
@@ -26,21 +32,25 @@ const TopNav = () => {
         </div>
       </NavbarBrand>
       <NavbarContent justify="center">
-        <NavbarItem as={Link} href="/members">
-          Matches
-        </NavbarItem>
-        <NavbarItem as={Link} href="/lists">
-          Lists
-        </NavbarItem>
-        <NavbarItem as={Link} href="/messages">
-          Messages
-        </NavbarItem>
+        <NavLink href="/members" label="Members" />
+        <NavLink href="/lists" label="Lists" />
+        <NavLink href="/messages" label="Messages" />
       </NavbarContent>
       <NavbarContent justify="end">
-        <Button variant="bordered" className="text-white">
+        <Button
+          as={Link}
+          href="/login"
+          variant="bordered"
+          className="text-white"
+        >
           Login
         </Button>
-        <Button variant="bordered" className="text-white">
+        <Button
+          as={Link}
+          href="/register"
+          variant="bordered"
+          className="text-white"
+        >
           Register
         </Button>
       </NavbarContent>
