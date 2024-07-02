@@ -1,22 +1,25 @@
 "use client";
-import { LoginSchema, loginSchema } from "@/src/lib/schemas/loginSchema";
+import {
+  RegisterSchema,
+  registerSchema,
+} from "@/src/lib/schemas/registerSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { GiPadlock } from "react-icons/gi";
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
     mode: "onTouched",
   });
 
-  const submitHandler = (data: LoginSchema) => {
+  const submitHandler = (data: RegisterSchema) => {
     console.log(data);
   };
 
@@ -26,9 +29,9 @@ const LoginForm = () => {
         <div className="flex flex-col gap-2 items-center text-secondary">
           <div className="flex flex-row items-center gap-3">
             <GiPadlock size={30} />
-            <h1 className="text-3xl font-semibold">Login</h1>
+            <h1 className="text-3xl font-semibold">Register</h1>
           </div>
-          <p className="text-neutral-500">Welcome back to NextMatch</p>
+          <p className="text-neutral-500">Welcome to NextMatch</p>
         </div>
       </CardHeader>
       <CardBody>
@@ -36,10 +39,18 @@ const LoginForm = () => {
           <div className="space-y-4">
             <Input
               defaultValue=""
+              label="Name"
+              variant="bordered"
+              isInvalid={!!errors.name}
+              errorMessage={errors.name?.message}
+              {...register("name")}
+            />
+            <Input
+              defaultValue=""
               label="Email"
               variant="bordered"
               isInvalid={!!errors.email}
-              errorMessage={errors.email?.message as string}
+              errorMessage={errors.email?.message}
               {...register("email")}
             />
             <Input
@@ -48,7 +59,7 @@ const LoginForm = () => {
               variant="bordered"
               type="password"
               isInvalid={!!errors.password}
-              errorMessage={errors.password?.message as string}
+              errorMessage={errors.password?.message}
               {...register("password")}
             />
             <Button
@@ -66,4 +77,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
