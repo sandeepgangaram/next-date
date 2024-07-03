@@ -6,8 +6,12 @@ import { prisma } from "../lib/prisma";
 import { User } from "@prisma/client";
 import { ActionResult } from "@/src/types";
 import { LoginSchema } from "../lib/schemas/loginSchema";
-import { signIn } from "../auth";
+import { signIn, signOut } from "../auth";
 import { AuthError } from "next-auth";
+
+export async function signOutUser() {
+  await signOut({ redirectTo: "/" });
+}
 
 export async function signInUser(
   data: LoginSchema
