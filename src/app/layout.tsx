@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import TopNav from "../components/navBar/TopNav";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,6 +17,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <ToastContainer
+          position="bottom-right"
+          hideProgressBar
+          className="z-50"
+        />
+
         <TopNav />
         <main className="container mx-auto"> {children}</main>
       </body>
