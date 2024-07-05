@@ -6,7 +6,7 @@ import { prisma } from "../lib/prisma";
 import { User } from "@prisma/client";
 import { ActionResult } from "@/src/types";
 import { LoginSchema } from "../lib/schemas/loginSchema";
-import { signIn, signOut } from "../auth";
+import { auth, signIn, signOut } from "../auth";
 import { AuthError } from "next-auth";
 
 export async function signOutUser() {
@@ -97,4 +97,14 @@ export async function getUserById(id: string) {
       id,
     },
   });
+}
+
+export async function getAuthUserIdFromSession() {
+  const session = await auth();
+
+  const userId = session?.user?.id;
+
+  if (!userId) throw new Error("Unauthorised");
+
+  return userId;
 }
