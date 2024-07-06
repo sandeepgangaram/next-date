@@ -9,6 +9,7 @@ import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { GiPadlock } from "react-icons/gi";
+import { handleFormServerErrors } from "@/src/actions/util";
 
 const RegisterForm = () => {
   const {
@@ -27,14 +28,7 @@ const RegisterForm = () => {
     if (result.status === "success") {
       console.log("User created successfully");
     } else {
-      if (Array.isArray(result.error)) {
-        result.error.forEach((e) => {
-          const path = e.path.join(".") as "email" | "password" | "name";
-          setError(path, { message: e.message });
-        });
-      } else {
-        setError("root.serverError", { message: result.error });
-      }
+      handleFormServerErrors(result, setError);
     }
   };
 
