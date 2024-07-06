@@ -1,10 +1,10 @@
 import { getAuthUserIdFromSession } from "@/src/actions/authActions";
 import { getMemberPhotosByUserId } from "@/src/actions/memberActions";
 import DeleteButton from "@/src/components/DeleteButton";
+import ImageUploadButton from "@/src/components/ImageUploadButton";
 import StarButton from "@/src/components/StarButton";
 import { CardBody, CardHeader, Divider } from "@nextui-org/react";
 import Image from "next/image";
-import { notFound } from "next/navigation";
 import React from "react";
 
 const EditMemberPhotos = async () => {
@@ -18,6 +18,9 @@ const EditMemberPhotos = async () => {
       </CardHeader>
       <Divider />
       <CardBody>
+        <div className="pt-5 pl-5">
+          <ImageUploadButton />
+        </div>
         <div className="grid grid-cols-5 gap-3 p-5">
           {photos &&
             photos.map((photo) => (
