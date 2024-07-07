@@ -40,7 +40,7 @@ const EditForm = ({ member }: Props) => {
   }, [member, reset]);
 
   const onSubmit = async (data: MemberEditSchema) => {
-    const result = await updateMemberProfile(data);
+    const result = await updateMemberProfile(data, data.name !== member.name);
 
     if (result.status === "success") {
       toast.success("Profile Updated");
