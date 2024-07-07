@@ -19,12 +19,14 @@ const EditMemberPhotos = async () => {
 
   return (
     <>
-      <CardHeader className="text-2xl font-semibold text-secondary">
-        Update Photos
+      <CardHeader className="flex flex-row justify-between items-center">
+        <div className="text-2xl font-semibold text-secondary">
+          Update Photos
+        </div>
+        <MemberPhotoUpload />
       </CardHeader>
       <Divider />
       <CardBody>
-        <MemberPhotoUpload />
         <MemberPhotos photos={photos} editing mainImageUrl={member?.image} />
       </CardBody>
     </>
