@@ -1,5 +1,8 @@
 import { getAuthUserIdFromSession } from "@/src/actions/authActions";
-import { getMemberPhotosByUserId } from "@/src/actions/memberActions";
+import {
+  getMemberByUserId,
+  getMemberPhotosByUserId,
+} from "@/src/actions/memberActions";
 import DeleteButton from "@/src/components/DeleteButton";
 import StarButton from "@/src/components/StarButton";
 import { CardBody, CardHeader, Divider } from "@nextui-org/react";
@@ -7,9 +10,11 @@ import Image from "next/image";
 import React from "react";
 import MemberPhotoUpload from "./MemberPhotoUpload";
 import MemberImage from "@/src/components/MemberImage";
+import MemberPhotos from "@/src/components/MemberPhotos";
 
 const EditMemberPhotos = async () => {
   const userId = await getAuthUserIdFromSession();
+  const member = await getMemberByUserId(userId);
   const photos = await getMemberPhotosByUserId(userId);
 
   return (
@@ -20,20 +25,7 @@ const EditMemberPhotos = async () => {
       <Divider />
       <CardBody>
         <MemberPhotoUpload />
-        <div className="grid grid-cols-5 gap-3 p-5">
-          {photos &&
-            photos.map((photo) => (
-              <div key={photo.id} className="relative">
-                <MemberImage photo={photo} />
-                <div className="absolute top-3 left-3 z-50">
-                  <StarButton selected={false} loading={false} />
-                </div>
-                <div className="absolute top-3 right-3 z-50">
-                  <DeleteButton loading={false} />
-                </div>
-              </div>
-            ))}
-        </div>
+        <MemberPhotos photos={photos} editing mainImageUrl={member?.image} />
       </CardBody>
     </>
   );
