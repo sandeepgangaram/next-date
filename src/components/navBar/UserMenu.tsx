@@ -1,6 +1,7 @@
 "use client";
 
 import { signOutUser } from "@/src/actions/authActions";
+import { transformImageUrl } from "@/src/actions/util";
 import {
   Avatar,
   Dropdown,
@@ -9,7 +10,6 @@ import {
   DropdownSection,
   DropdownTrigger,
 } from "@nextui-org/react";
-import { Session } from "next-auth";
 import Link from "next/link";
 import React from "react";
 
@@ -27,7 +27,7 @@ const UserMenu = ({ userInfo }: Props) => {
           color="secondary"
           name={userInfo?.name || "user avatar"}
           size="sm"
-          src={userInfo?.image || "/images/user.png"}
+          src={transformImageUrl(userInfo?.image) || "/images/user.png"}
         />
       </DropdownTrigger>
       <DropdownMenu variant="flat" aria-label="user actions menu">
