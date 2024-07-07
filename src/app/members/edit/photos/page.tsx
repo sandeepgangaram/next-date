@@ -6,6 +6,7 @@ import { CardBody, CardHeader, Divider } from "@nextui-org/react";
 import Image from "next/image";
 import React from "react";
 import MemberPhotoUpload from "./MemberPhotoUpload";
+import MemberImage from "@/src/components/MemberImage";
 
 const EditMemberPhotos = async () => {
   const userId = await getAuthUserIdFromSession();
@@ -23,12 +24,7 @@ const EditMemberPhotos = async () => {
           {photos &&
             photos.map((photo) => (
               <div key={photo.id} className="relative">
-                <Image
-                  width={220}
-                  height={220}
-                  src={photo.url}
-                  alt="Image of user"
-                />
+                <MemberImage photo={photo} />
                 <div className="absolute top-3 left-3 z-50">
                   <StarButton selected={false} loading={false} />
                 </div>
