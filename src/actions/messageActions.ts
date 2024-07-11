@@ -2,15 +2,17 @@
 
 import { Message } from "@prisma/client";
 import { MessageSchema, messageSchema } from "../lib/schemas/messageSchema";
-import { ActionResult } from "../types";
+import { ActionResult, MessageDto } from "../types";
 import { getAuthUserIdFromSession } from "./authActions";
 import { prisma } from "../lib/prisma";
 import { mapMessageToMessageDto } from "../lib/mappings";
+import { pusherServer } from "../lib/pusher";
+import { createChatId } from "./util";
 
 export async function createMessage(
   recipientId: string,
   data: MessageSchema
-): Promise<ActionResult<Message>> {
+): Promise<ActionResult<MessageDto>> {
   try {
     const userId = await getAuthUserIdFromSession();
     const validated = messageSchema.safeParse(data);
@@ -25,9 +27,18 @@ export async function createMessage(
         recipientId: recipientId,
         senderId: userId,
       },
+      select: messageSelect,
     });
 
-    return { status: "success", data: message };
+    const messageDto = mapMessageToMessageDto(message);
+
+    await pusherServer.trigger(
+      createChatId(userId, recipientId),
+      "message:new",
+      messageDto
+    );
+
+    return { status: "success", data: messageDto };
   } catch (error) {
     console.log(error);
     return { status: "error", error: "Something went wrong" };
@@ -56,26 +67,7 @@ export async function getMessageThread(recipientId: string) {
       orderBy: {
         created: "asc",
       },
-      select: {
-        id: true,
-        text: true,
-        created: true,
-        dateRead: true,
-        sender: {
-          select: {
-            userId: true,
-            name: true,
-            image: true,
-          },
-        },
-        recipient: {
-          select: {
-            userId: true,
-            name: true,
-            image: true,
-          },
-        },
-      },
+      select: messageSelect,
     });
 
     if (messages.length > 0) {
@@ -111,26 +103,7 @@ export async function getMessageByContainer(container: string) {
       orderBy: {
         created: "desc",
       },
-      select: {
-        id: true,
-        text: true,
-        created: true,
-        dateRead: true,
-        sender: {
-          select: {
-            userId: true,
-            name: true,
-            image: true,
-          },
-        },
-        recipient: {
-          select: {
-            userId: true,
-            name: true,
-            image: true,
-          },
-        },
-      },
+      select: messageSelect,
     });
 
     return messages.map((message) => mapMessageToMessageDto(message));
@@ -182,3 +155,24 @@ export async function deleteMessage(messageId: string, isOutbox: boolean) {
     throw error;
   }
 }
+
+const messageSelect = {
+  id: true,
+  text: true,
+  created: true,
+  dateRead: true,
+  sender: {
+    select: {
+      userId: true,
+      name: true,
+      image: true,
+    },
+  },
+  recipient: {
+    select: {
+      userId: true,
+      name: true,
+      image: true,
+    },
+  },
+};
