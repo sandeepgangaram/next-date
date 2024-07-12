@@ -4,7 +4,8 @@ import { pusherClient } from "../lib/pusher";
 import { usePathname, useSearchParams } from "next/navigation";
 import useMessageStore from "./useMessageStore";
 import { MessageDto } from "../types";
-import { newMessageToast } from "../components/NewMessageToast";
+import { newLikeToast, newMessageToast } from "../components/NewMessageToast";
+import { Member } from "@prisma/client";
 
 export const useNotificationChannel = (userId: string | null) => {
   const channelRef = useRef<Channel | null>(null);
@@ -31,6 +32,21 @@ export const useNotificationChannel = (userId: string | null) => {
     [add, updateUnreadCount, pathname, searchParams]
   );
 
+  const handleNewLike = useCallback(
+    ({
+      name,
+      image,
+      userId,
+    }: {
+      name: string;
+      image: string | null;
+      userId: string;
+    }) => {
+      newLikeToast(name, userId, image);
+    },
+    []
+  );
+
   useEffect(() => {
     if (!userId) return;
 
@@ -38,6 +54,7 @@ export const useNotificationChannel = (userId: string | null) => {
       channelRef.current = pusherClient.subscribe(`private-${userId}`);
 
       channelRef.current.bind("message:new", handleNewMessage);
+      channelRef.current.bind("like:new", handleNewLike);
     }
 
     return () => {
@@ -47,5 +64,5 @@ export const useNotificationChannel = (userId: string | null) => {
         channelRef.current = null;
       }
     };
-  }, [userId, handleNewMessage]);
+  }, [userId, handleNewMessage, handleNewLike]);
 };
