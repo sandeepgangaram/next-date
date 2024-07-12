@@ -1,5 +1,6 @@
 "use client";
 
+import useMessageStore from "@/src/hooks/useMessageStore";
 import { NavbarItem } from "@nextui-org/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,9 +12,13 @@ interface Props {
 }
 const NavLink = ({ href, label }: Props) => {
   const path = usePathname();
+  const { unreadCount } = useMessageStore((state) => ({
+    unreadCount: state.unreadCount,
+  }));
   return (
     <NavbarItem isActive={path === href} as={Link} href={href}>
-      {label}
+      <span>{label}</span>
+      {href === "/messages" && <span className="ml-1">({unreadCount})</span>}
     </NavbarItem>
   );
 };
