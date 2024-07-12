@@ -1,6 +1,7 @@
 "use client";
 import { deleteMessage } from "@/src/actions/messageActions";
 import { truncateString } from "@/src/actions/util";
+import PresenceAvatar from "@/src/components/PresenceAvatar";
 import { MessageDto } from "@/src/types";
 import {
   Avatar,
@@ -15,6 +16,7 @@ import {
   getKeyValue,
 } from "@nextui-org/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { userInfo } from "os";
 import React, { Key, useCallback, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 
@@ -68,12 +70,9 @@ const MessageTable = ({ messages }: Props) => {
         case "senderName":
           return (
             <div className="flex items-center gap-2 cursor-pointer">
-              <Avatar
-                alt="Image of member"
-                src={
-                  (isOutBox ? item.recipientImage : item.senderImage) ||
-                  "/images/user.png"
-                }
+              <PresenceAvatar
+                userId={isOutBox ? item.recipientId : item.senderId}
+                src={isOutBox ? item.recipientImage : item.senderImage}
               />
             </div>
           );

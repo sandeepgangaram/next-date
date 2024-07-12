@@ -1,8 +1,8 @@
 "use client";
 
 import { timeAgo, transformImageUrl } from "@/src/actions/util";
+import PresenceAvatar from "@/src/components/PresenceAvatar";
 import { MessageDto } from "@/src/types";
-import { Avatar } from "@nextui-org/react";
 import clsx from "clsx";
 import React, { useEffect, useRef } from "react";
 
@@ -21,11 +21,12 @@ const MessageBox = ({ message, currentUserId }: Props) => {
   const isCurrentUserSender = message.senderId === currentUserId;
 
   const renderAvatar = () => (
-    <Avatar
-      name={message.senderName}
-      className="self-end"
-      src={transformImageUrl(message.senderImage) || "/images/user.png"}
-    />
+    <div className="self-end">
+      <PresenceAvatar
+        userId={message.senderId}
+        src={transformImageUrl(message.senderImage) || "/images/user.png"}
+      />
+    </div>
   );
 
   const renderMessageHeader = () => (
