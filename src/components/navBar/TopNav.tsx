@@ -6,7 +6,6 @@ import NavLink from "./NavLink";
 import { auth } from "@/src/auth";
 import UserMenu from "./UserMenu";
 import { getUserInfoForNav } from "@/src/actions/userActions";
-import { userInfo } from "os";
 
 const TopNav = async () => {
   const session = await auth();
