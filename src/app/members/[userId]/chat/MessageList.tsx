@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import MessageBox from "./MessageBox";
 import { MessageDto } from "@/src/types";
 import { pusherClient } from "@/src/lib/pusher";
+import { formatShortDateTime } from "@/src/actions/util";
 
 interface Props {
   initialMessages: MessageDto[];
@@ -16,15 +17,26 @@ const MessageList = ({ initialMessages, currentUserId, chatId }: Props) => {
     setMessages((prev) => [...prev, newMessage]);
   }, []);
 
+  const handleReadMessages = useCallback((messageIds: string[]) => {
+    setMessages((prev) =>
+      prev.map((message) =>
+        messageIds.includes(message.id)
+          ? { ...message, dateRead: formatShortDateTime(new Date()) }
+          : message
+      )
+    );
+  }, []);
   useEffect(() => {
     const channel = pusherClient.subscribe(chatId);
     channel.bind("message:new", handleNewMessage);
+    channel.bind("messages:read", handleReadMessages);
 
     return () => {
       channel.unsubscribe();
       channel.unbind("message:new", handleNewMessage);
+      channel.unbind("messages:read", handleReadMessages);
     };
-  }, [chatId, handleNewMessage]);
+  }, [chatId, handleNewMessage, handleReadMessages]);
 
   return (
     <>

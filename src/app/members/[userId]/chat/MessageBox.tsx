@@ -1,6 +1,6 @@
 "use client";
 
-import { transformImageUrl } from "@/src/actions/util";
+import { timeAgo, transformImageUrl } from "@/src/actions/util";
 import { MessageDto } from "@/src/types";
 import { Avatar } from "@nextui-org/react";
 import clsx from "clsx";
@@ -35,7 +35,9 @@ const MessageBox = ({ message, currentUserId }: Props) => {
       })}
     >
       {message.dateRead && message.recipientId !== currentUserId ? (
-        <span className="text-xs text-black text-italic">Read 3 mins ago</span>
+        <span className="text-xs text-black text-italic">
+          Read {timeAgo(message.dateRead)}
+        </span>
       ) : (
         <div></div>
       )}
