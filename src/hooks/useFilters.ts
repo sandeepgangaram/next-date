@@ -4,6 +4,7 @@ import { FaMale, FaFemale } from "react-icons/fa";
 import useFilterStore from "./useFilterStore";
 import { useEffect, useTransition } from "react";
 import { Selection } from "@nextui-org/react";
+import usePaginationStore from "./usePaginationStore";
 
 export const useFilters = () => {
   const pathname = usePathname();
@@ -13,7 +14,18 @@ export const useFilters = () => {
   const { filters, setFilters } = useFilterStore();
   const [isPending, setTransition] = useTransition();
 
+  const { pageNumber, pageSize, setPage } = usePaginationStore((state) => ({
+    pageNumber: state.pagination.pageNumber,
+    pageSize: state.pagination.pageSize,
+    setPage: state.setPage,
+  }));
   const { gender, ageRange, orderBy } = filters;
+
+  useEffect(() => {
+    if (gender || ageRange || orderBy) {
+      setPage(1);
+    }
+  }, [ageRange, gender, orderBy, setPage]);
 
   useEffect(() => {
     setTransition(() => {
@@ -22,18 +34,22 @@ export const useFilters = () => {
       if (gender) {
         searchParams.set("gender", gender.join(","));
       }
-
       if (ageRange) {
         searchParams.set("ageRange", ageRange.toString());
       }
-
       if (orderBy) {
         searchParams.set("orderBy", orderBy);
+      }
+      if (pageNumber) {
+        searchParams.set("pageNumber", pageNumber.toString());
+      }
+      if (pageSize) {
+        searchParams.set("pageSize", pageSize.toString());
       }
 
       router.replace(`${pathname}?${searchParams}`);
     });
-  }, [ageRange, gender, orderBy, pathname, router]);
+  }, [ageRange, gender, orderBy, pageNumber, pageSize, pathname, router]);
 
   const orderByList = [
     { label: "Last Active", value: "updated" },

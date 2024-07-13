@@ -2,11 +2,11 @@ import { getMembers } from "@/src/actions/memberActions";
 import MemberCard from "./MemberCard";
 import { fetchCurrentUserLikeIds } from "@/src/actions/likeActions";
 import PaginationComponent from "@/src/components/PaginationComponent";
-import { UserFilters } from "@/src/types";
+import { GetMemberParams, UserFilters } from "@/src/types";
 import EmptyState from "@/src/components/EmptyState";
 
-const Members = async ({ searchParams }: { searchParams: UserFilters }) => {
-  const members = await getMembers(searchParams);
+const Members = async ({ searchParams }: { searchParams: GetMemberParams }) => {
+  const { items: members, totalCount } = await getMembers(searchParams);
   const likeIds = await fetchCurrentUserLikeIds();
   return (
     <>
@@ -26,7 +26,7 @@ const Members = async ({ searchParams }: { searchParams: UserFilters }) => {
                 );
               })}
           </div>
-          <PaginationComponent />
+          <PaginationComponent totalCount={totalCount} />
         </>
       )}
     </>
