@@ -6,6 +6,7 @@ import {
   SelectItem,
   Selection,
   Slider,
+  Spinner,
 } from "@nextui-org/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FaFemale, FaMale } from "react-icons/fa";
@@ -16,6 +17,7 @@ const Filters = () => {
     orderByList,
     genders,
     filters,
+    isPending,
     selectAge,
     selectGender,
     selectOrder,
@@ -25,7 +27,12 @@ const Filters = () => {
   return (
     <div className="shadow-md py-2">
       <div className="flex flex-row justify-around items-center">
-        <div className="text-secondary font-semibold text-xl">Results: 10</div>
+        <div className="flex gap-2 items-center">
+          <div className="text-secondary font-semibold text-xl">
+            Results: 10
+          </div>
+          {isPending && <Spinner size="sm" color="secondary" />}
+        </div>
         <div className="flex gap-2 items-center">
           <div>Gender:</div>
           {genders.map(({ icon: Icon, value }) => (

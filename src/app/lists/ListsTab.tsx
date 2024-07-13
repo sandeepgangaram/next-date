@@ -5,7 +5,7 @@ import { Member } from "@prisma/client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { Key, useTransition } from "react";
 import MemberCard from "../members/MemberCard";
-import LoadingComponent from "@/src/components/navBar/LoadingComponent";
+import LoadingComponent from "@/src/components/LoadingComponent";
 
 interface Props {
   members?: Member[];
