@@ -1,12 +1,11 @@
 import { Button, Navbar, NavbarBrand, NavbarContent } from "@nextui-org/react";
 import Link from "next/link";
-import React from "react";
 import { GiMatchTip } from "react-icons/gi";
 import NavLink from "./NavLink";
 import { auth } from "@/src/auth";
 import UserMenu from "./UserMenu";
 import { getUserInfoForNav } from "@/src/actions/userActions";
-import Filters from "./Filters";
+import FiltersWrapper from "./FiltersWrapper";
 
 const TopNav = async () => {
   const session = await auth();
@@ -63,7 +62,7 @@ const TopNav = async () => {
           )}
         </NavbarContent>
       </Navbar>
-      <Filters />
+      <FiltersWrapper />
     </>
   );
 };

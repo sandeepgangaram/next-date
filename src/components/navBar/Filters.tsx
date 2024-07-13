@@ -8,7 +8,6 @@ import {
   Slider,
 } from "@nextui-org/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React from "react";
 import { FaFemale, FaMale } from "react-icons/fa";
 
 const Filters = () => {
