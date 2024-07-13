@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Providers from "../components/Providers";
 import { getAuthUserIdFromSession } from "../actions/authActions";
+import { auth } from "../auth";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +17,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const userId = await getAuthUserIdFromSession();
+  const session = await auth();
+  const userId = session?.user?.id || null;
 
   return (
     <html lang="en">

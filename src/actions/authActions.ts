@@ -1,7 +1,11 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import { RegisterSchema, registerSchema } from "../lib/schemas/registerSchema";
+import {
+  RegisterSchema,
+  combinedRegisterSchema,
+  registerSchema,
+} from "../lib/schemas/registerSchema";
 import { prisma } from "../lib/prisma";
 import { User } from "@prisma/client";
 import { ActionResult } from "@/src/types";
@@ -46,13 +50,22 @@ export async function registerUser(
   data: RegisterSchema
 ): Promise<ActionResult<User>> {
   try {
-    const validated = registerSchema.safeParse(data);
+    const validated = combinedRegisterSchema.safeParse(data);
 
     if (!validated.success) {
       return { status: "error", error: validated.error.errors };
     }
 
-    const { name, email, password } = data;
+    const {
+      name,
+      email,
+      password,
+      gender,
+      description,
+      dateOfBirth,
+      city,
+      country,
+    } = data;
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -69,6 +82,16 @@ export async function registerUser(
         name,
         email,
         passwordHash: hashedPassword,
+        member: {
+          create: {
+            name,
+            description,
+            city,
+            country,
+            dateOfBirth: new Date(dateOfBirth),
+            gender,
+          },
+        },
       },
     });
 
