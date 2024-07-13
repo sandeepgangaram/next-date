@@ -4,7 +4,7 @@ import usePresenceStore from "./usePresenceStore";
 import { Channel, Members } from "pusher-js";
 import { pusherClient } from "../lib/pusher";
 
-export const usePresenceChannel = () => {
+export const usePresenceChannel = (userId: string | null) => {
   const { set, add, remove } = usePresenceStore((state) => ({
     set: state.set,
     add: state.add,
@@ -35,6 +35,7 @@ export const usePresenceChannel = () => {
   );
 
   useEffect(() => {
+    if (!userId) return;
     if (!channelRef.current) {
       channelRef.current = pusherClient.subscribe("presence-next-match");
       channelRef.current.bind(
@@ -71,5 +72,5 @@ export const usePresenceChannel = () => {
         }
       };
     }
-  }, [handleAddMember, handleRemoveMember, handleSetMembers]);
+  }, [userId, handleAddMember, handleRemoveMember, handleSetMembers]);
 };
