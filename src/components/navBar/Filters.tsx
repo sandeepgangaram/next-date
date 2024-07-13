@@ -1,4 +1,5 @@
 "use client";
+import { useFilters } from "@/src/hooks/useFilters";
 import {
   Button,
   Select,
@@ -12,52 +13,14 @@ import { FaFemale, FaMale } from "react-icons/fa";
 
 const Filters = () => {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const orderByList = [
-    { label: "Last Active", value: "updated" },
-    { label: "Newest Members", value: "created" },
-  ];
-
-  const genders = [
-    { value: "male", icon: FaMale },
-    { value: "female", icon: FaFemale },
-  ];
-
-  const selectedGender = searchParams.get("gender")?.split(",") || [
-    "male",
-    "female",
-  ];
-
-  const handleAgeSelect = (value: number[]) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("ageRange", value.join(","));
-    router.replace(`${pathname}?${params}`);
-  };
-
-  const handleOrderSelect = (value: Selection) => {
-    if (value instanceof Set) {
-      const params = new URLSearchParams(searchParams);
-      params.set("orderBy", value.values().next().value);
-      router.replace(`${pathname}?${params}`);
-    }
-  };
-
-  const handleGenderSelect = (value: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (selectedGender.includes(value)) {
-      params.set(
-        "gender",
-        selectedGender.filter((g) => g !== value).toString()
-      );
-    } else {
-      params.set("gender", [...selectedGender, value].toString());
-    }
-
-    router.replace(`${pathname}?${params}`);
-  };
-
+  const {
+    orderByList,
+    genders,
+    filters,
+    selectAge,
+    selectGender,
+    selectOrder,
+  } = useFilters();
   if (pathname !== "/members") return null;
 
   return (
@@ -71,8 +34,8 @@ const Filters = () => {
               key={value}
               size="sm"
               isIconOnly
-              color={selectedGender.includes(value) ? "secondary" : "default"}
-              onClick={() => handleGenderSelect(value)}
+              color={filters.gender.includes(value) ? "secondary" : "default"}
+              onClick={() => selectGender(value)}
             >
               <Icon size={24} />
             </Button>
@@ -86,7 +49,7 @@ const Filters = () => {
             minValue={18}
             maxValue={100}
             defaultValue={[18, 100]}
-            onChangeEnd={(value) => handleAgeSelect(value as number[])}
+            onChangeEnd={(value) => selectAge(value as number[])}
           />
         </div>
         <div className="w-1/4">
@@ -97,8 +60,8 @@ const Filters = () => {
             variant="bordered"
             color="secondary"
             aria-label="Order by selector"
-            selectedKeys={new Set([searchParams.get("orderBy") || "update"])}
-            onSelectionChange={handleOrderSelect}
+            selectedKeys={new Set([filters.orderBy])}
+            onSelectionChange={selectOrder}
           >
             {orderByList.map((item) => (
               <SelectItem key={item.value} value={item.value}>
