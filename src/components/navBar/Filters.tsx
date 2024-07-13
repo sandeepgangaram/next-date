@@ -52,6 +52,7 @@ const Filters = () => {
             label="Age range"
             color="secondary"
             size="sm"
+            aria-label="Age range slider"
             minValue={18}
             maxValue={100}
             defaultValue={[18, 100]}

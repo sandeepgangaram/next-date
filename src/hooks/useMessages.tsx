@@ -1,33 +1,57 @@
 import { useRouter, useSearchParams } from "next/navigation";
-import { Key, useCallback, useEffect, useState } from "react";
+import { Key, useCallback, useEffect, useRef, useState } from "react";
 import { MessageDto } from "../types";
-import { deleteMessage } from "../actions/messageActions";
+import {
+  deleteMessage,
+  getMessageByContainer,
+} from "../actions/messageActions";
 import useMessageStore from "./useMessageStore";
 
-export const useMessages = (initialMessages: MessageDto[]) => {
-  const { messages, set, remove, updateReadCount } = useMessageStore(
-    (state) => ({
+export const useMessages = (
+  initialMessages: MessageDto[],
+  nextCursor?: string
+) => {
+  const cursorRef = useRef(nextCursor);
+  const { messages, set, remove, updateReadCount, resetMessages } =
+    useMessageStore((state) => ({
       set: state.set,
       remove: state.remove,
       updateReadCount: state.updateUnreadCount,
+      resetMessages: state.resetMessages,
       messages: state.messages,
-    })
-  );
+    }));
   const searchParams = useSearchParams();
   const router = useRouter();
   const isOutBox = searchParams.get("container") === "outbox";
+  const container = searchParams.get("container");
   const [isDeleting, setIsDeleting] = useState({
     id: "",
     loading: false,
   });
+  const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
     set(initialMessages);
+    cursorRef.current = nextCursor;
 
     return () => {
-      set([]);
+      resetMessages();
     };
-  }, [initialMessages, set]);
+  }, [initialMessages, set, resetMessages, nextCursor]);
+
+  const loadMore = useCallback(async () => {
+    if (cursorRef.current) {
+      setLoadingMore(true);
+      const { messages, nextCursor } = await getMessageByContainer(
+        container,
+        cursorRef.current
+      );
+
+      set(messages);
+      cursorRef.current = nextCursor;
+      setLoadingMore(false);
+    }
+  }, [container, set]);
 
   const columns = [
     {
@@ -68,5 +92,8 @@ export const useMessages = (initialMessages: MessageDto[]) => {
     messages,
     deleteMessage: handleDeleteMessage,
     selectRow: handleRowSelect,
+    loadMore,
+    loadingMore,
+    hasMore: !!cursorRef.current,
   };
 };
