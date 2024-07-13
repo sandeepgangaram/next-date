@@ -8,24 +8,26 @@ import usePaginationStore from "./usePaginationStore";
 
 export const useFilters = () => {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
 
   const { filters, setFilters } = useFilterStore();
   const [isPending, setTransition] = useTransition();
 
-  const { pageNumber, pageSize, setPage } = usePaginationStore((state) => ({
-    pageNumber: state.pagination.pageNumber,
-    pageSize: state.pagination.pageSize,
-    setPage: state.setPage,
-  }));
-  const { gender, ageRange, orderBy } = filters;
+  const { pageNumber, pageSize, totalCount, setPage } = usePaginationStore(
+    (state) => ({
+      pageNumber: state.pagination.pageNumber,
+      pageSize: state.pagination.pageSize,
+      totalCount: state.pagination.totalCount,
+      setPage: state.setPage,
+    })
+  );
+  const { gender, ageRange, orderBy, withPhotos } = filters;
 
   useEffect(() => {
-    if (gender || ageRange || orderBy) {
+    if (gender || ageRange || orderBy || withPhotos) {
       setPage(1);
     }
-  }, [ageRange, gender, orderBy, setPage]);
+  }, [ageRange, gender, orderBy, withPhotos, setPage]);
 
   useEffect(() => {
     setTransition(() => {
@@ -46,10 +48,20 @@ export const useFilters = () => {
       if (pageSize) {
         searchParams.set("pageSize", pageSize.toString());
       }
+      searchParams.set("withPhotos", withPhotos.toString());
 
       router.replace(`${pathname}?${searchParams}`);
     });
-  }, [ageRange, gender, orderBy, pageNumber, pageSize, pathname, router]);
+  }, [
+    withPhotos,
+    ageRange,
+    gender,
+    orderBy,
+    pageNumber,
+    pageSize,
+    pathname,
+    router,
+  ]);
 
   const orderByList = [
     { label: "Last Active", value: "updated" },
@@ -82,11 +94,18 @@ export const useFilters = () => {
     }
   };
 
+  const handleWithPhotosToggle = () => {
+    setFilters("withPhotos", !withPhotos);
+  };
+
   return {
     orderByList,
     genders,
     filters,
     isPending,
+    withPhotos,
+    totalCount,
+    selectPhotos: handleWithPhotosToggle,
     selectAge: handleAgeSelect,
     selectGender: handleGenderSelect,
     selectOrder: handleOrderSelect,

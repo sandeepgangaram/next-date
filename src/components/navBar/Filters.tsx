@@ -4,12 +4,11 @@ import {
   Button,
   Select,
   SelectItem,
-  Selection,
   Slider,
   Spinner,
+  Switch,
 } from "@nextui-org/react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FaFemale, FaMale } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
 const Filters = () => {
   const pathname = usePathname();
@@ -18,9 +17,12 @@ const Filters = () => {
     genders,
     filters,
     isPending,
+    withPhotos,
+    totalCount,
     selectAge,
     selectGender,
     selectOrder,
+    selectPhotos,
   } = useFilters();
   if (pathname !== "/members") return null;
 
@@ -29,9 +31,9 @@ const Filters = () => {
       <div className="flex flex-row justify-around items-center">
         <div className="flex gap-2 items-center">
           <div className="text-secondary font-semibold text-xl">
-            Results: 10
+            Results:{" "}
+            {isPending ? <Spinner size="sm" color="secondary" /> : totalCount}
           </div>
-          {isPending && <Spinner size="sm" color="secondary" />}
         </div>
         <div className="flex gap-2 items-center">
           <div>Gender:</div>
@@ -57,6 +59,15 @@ const Filters = () => {
             maxValue={100}
             defaultValue={[18, 100]}
             onChangeEnd={(value) => selectAge(value as number[])}
+          />
+        </div>
+        <div className="flex flex-col items-center">
+          <p>With photo</p>
+          <Switch
+            size="sm"
+            color="secondary"
+            isSelected={withPhotos}
+            onValueChange={selectPhotos}
           />
         </div>
         <div className="w-1/4">
