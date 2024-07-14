@@ -37,7 +37,7 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
-  passwordHash  String
+  passwordHash  String?
   emailVerified DateTime? @map("email_verified")
   profileComplete Boolean @default(false)
   image         String?

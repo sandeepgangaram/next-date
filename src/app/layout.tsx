@@ -19,11 +19,12 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   const userId = session?.user?.id || null;
+  const profileComplete = Boolean(session?.user.profileComplete);
 
   return (
     <html lang="en">
       <body>
-        <Providers userId={userId}>
+        <Providers userId={userId} profileComplete={profileComplete}>
           <ToastContainer
             position="bottom-right"
             hideProgressBar

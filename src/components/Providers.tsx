@@ -8,9 +8,11 @@ import { getUnreadMessageCount } from "../actions/messageActions";
 
 const Providers = ({
   userId,
+  profileComplete,
   children,
 }: {
   userId: string | null;
+  profileComplete: boolean;
   children: ReactNode;
 }) => {
   const isUnreadCountSet = useRef(false);
@@ -35,8 +37,8 @@ const Providers = ({
     }
   }, [setUnreadCount, userId]);
 
-  usePresenceChannel(userId);
-  useNotificationChannel(userId);
+  usePresenceChannel(userId, profileComplete);
+  useNotificationChannel(userId, profileComplete);
   return <NextUIProvider>{children}</NextUIProvider>;
 };
 
