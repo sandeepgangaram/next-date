@@ -39,6 +39,7 @@ model User {
   email         String?   @unique
   passwordHash  String
   emailVerified DateTime? @map("email_verified")
+  profileComplete Boolean @default(false)
   image         String?
   accounts      Account[]
 
@@ -99,4 +100,18 @@ model Like {
   dateRead DateTime?
   senderDeleted Boolean @default(false)
   recipientDeleted Boolean @default(false)
+ }
+
+ model Token {
+  id String @id @default(cuid())
+  email String
+  token String
+  expires DateTime
+  type TokenType
+  @@unique([email,token])
+ }
+
+ enum TokenType {
+  VERIFICATION
+  PASSWORD_RESET
  }

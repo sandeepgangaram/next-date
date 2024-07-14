@@ -7,11 +7,13 @@ import {
   registerSchema,
 } from "../lib/schemas/registerSchema";
 import { prisma } from "../lib/prisma";
-import { User } from "@prisma/client";
+import { TokenType, User } from "@prisma/client";
 import { ActionResult } from "@/src/types";
 import { LoginSchema } from "../lib/schemas/loginSchema";
 import { auth, signIn, signOut } from "../auth";
 import { AuthError } from "next-auth";
+import { generateToken, getTokenByToken } from "../lib/token";
+import { sendVerificationEmail } from "../lib/mail";
 
 export async function signOutUser() {
   await signOut({ redirectTo: "/" });
@@ -21,6 +23,29 @@ export async function signInUser(
   data: LoginSchema
 ): Promise<ActionResult<string>> {
   try {
+    const existingUser = await getUserByEmail(data.email);
+
+    if (!existingUser || !existingUser.email) {
+      return { status: "error", error: "Invalid credentials" };
+    }
+
+    if (!existingUser.emailVerified) {
+      const token = await generateToken(
+        existingUser.email,
+        TokenType.VERIFICATION
+      );
+      console.log("token", token);
+      //Send user email
+      if (token) {
+        await sendVerificationEmail(token.email, token.token);
+      }
+
+      return {
+        status: "error",
+        error: "Please verify your email address before logging in",
+      };
+    }
+
     const result = await signIn("credentials", {
       email: data.email,
       password: data.password,
@@ -82,6 +107,7 @@ export async function registerUser(
         name,
         email,
         passwordHash: hashedPassword,
+        profileComplete: true,
         member: {
           create: {
             name,
@@ -94,6 +120,19 @@ export async function registerUser(
         },
       },
     });
+
+    const verificationToken = await generateToken(
+      email,
+      TokenType.VERIFICATION
+    );
+
+    //Send an email for verification
+    if (verificationToken) {
+      await sendVerificationEmail(
+        verificationToken.email,
+        verificationToken.token
+      );
+    }
 
     return { status: "success", data: user };
   } catch (error) {
@@ -130,4 +169,42 @@ export async function getAuthUserIdFromSession() {
   if (!userId) throw new Error("Unauthorised");
 
   return userId;
+}
+
+export async function verifyEmail(
+  token: string
+): Promise<ActionResult<string>> {
+  try {
+    const existingToken = await getTokenByToken(token);
+
+    if (!existingToken) {
+      return { status: "error", error: "Invalid token" };
+    }
+
+    const hasExpired = new Date() > existingToken.expires;
+
+    if (hasExpired) {
+      return { status: "error", error: "Token has expired" };
+    }
+
+    const existingUser = await getUserByEmail(existingToken.email);
+
+    if (!existingUser) {
+      return { status: "error", error: "User not found" };
+    }
+
+    await prisma.user.update({
+      where: { id: existingUser.id },
+      data: { emailVerified: new Date() },
+    });
+
+    await prisma.token.delete({
+      where: { id: existingToken.id },
+    });
+
+    return { status: "success", data: "Success" };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
