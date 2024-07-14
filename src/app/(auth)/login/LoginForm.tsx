@@ -3,6 +3,7 @@ import { signInUser } from "@/src/actions/authActions";
 import { LoginSchema, loginSchema } from "@/src/lib/schemas/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -72,6 +73,9 @@ const LoginForm = () => {
             >
               Login
             </Button>
+            <div className="flex justify-center hover:underline text-sm">
+              <Link href="/forgot-password">Forgot password?</Link>
+            </div>
           </div>
         </form>
       </CardBody>
