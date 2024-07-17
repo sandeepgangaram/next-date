@@ -5,6 +5,8 @@ import {
   fetchLikedMembers,
 } from "@/src/actions/likeActions";
 
+export const dynamic = "force-dynamic";
+
 const ListsPage = async ({
   searchParams,
 }: {
