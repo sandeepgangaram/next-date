@@ -1,6 +1,6 @@
 import { Button, Navbar, NavbarBrand, NavbarContent } from "@nextui-org/react";
 import Link from "next/link";
-import { GiMatchTip } from "react-icons/gi";
+import { GiRose } from "react-icons/gi";
 import NavLink from "./NavLink";
 import { auth } from "@/src/auth";
 import UserMenu from "./UserMenu";
@@ -41,16 +41,17 @@ const TopNav = async () => {
         }}
       >
         <NavbarBrand as={Link} href="/">
-          <GiMatchTip size={40} className="text-gray-200" />
+          <GiRose size={40} className="text-gray-200" />
           <div className="font-bold text-3xl flex">
             <span className="text-gray-900">Next</span>
             <span className="text-gray-200">Match</span>
           </div>
         </NavbarBrand>
         <NavbarContent justify="center">
-          {links.map((item) => (
-            <NavLink key={item.href} href={item.href} label={item.label} />
-          ))}
+          {session &&
+            links.map((item) => (
+              <NavLink key={item.href} href={item.href} label={item.label} />
+            ))}
         </NavbarContent>
         <NavbarContent justify="end">
           {session?.user ? (

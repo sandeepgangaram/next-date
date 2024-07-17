@@ -18,7 +18,9 @@ const NavLink = ({ href, label }: Props) => {
   return (
     <NavbarItem isActive={path === href} as={Link} href={href}>
       <span>{label}</span>
-      {href === "/messages" && <span className="ml-1">({unreadCount})</span>}
+      {href === "/messages" && unreadCount > 0 && (
+        <span className="ml-1">({unreadCount})</span>
+      )}
     </NavbarItem>
   );
 };
