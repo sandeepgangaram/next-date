@@ -5,6 +5,7 @@ import { usePresenceChannel } from "../hooks/usePresenceChannel";
 import { useNotificationChannel } from "../hooks/useNotificationChannel";
 import useMessageStore from "../hooks/useMessageStore";
 import { getUnreadMessageCount } from "../actions/messageActions";
+import { SessionProvider } from "next-auth/react";
 
 const Providers = ({
   userId,
@@ -39,7 +40,11 @@ const Providers = ({
 
   usePresenceChannel(userId, profileComplete);
   useNotificationChannel(userId, profileComplete);
-  return <NextUIProvider>{children}</NextUIProvider>;
+  return (
+    <SessionProvider>
+      <NextUIProvider>{children}</NextUIProvider>
+    </SessionProvider>
+  );
 };
 
 export default Providers;

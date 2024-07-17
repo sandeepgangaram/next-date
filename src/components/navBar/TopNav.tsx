@@ -11,6 +11,21 @@ const TopNav = async () => {
   const session = await auth();
   const userInfo = session?.user && (await getUserInfoForNav());
 
+  const memberLinks = [
+    { href: "/members", label: "Members" },
+    { href: "/lists", label: "Lists" },
+    { href: "/messages", label: "Messages" },
+  ];
+
+  const adminLinks = [
+    {
+      href: "/admin/moderation",
+      label: "Photo Moderation",
+    },
+  ];
+
+  const links = session?.user.role === "ADMIN" ? adminLinks : memberLinks;
+
   return (
     <>
       <Navbar
@@ -33,9 +48,9 @@ const TopNav = async () => {
           </div>
         </NavbarBrand>
         <NavbarContent justify="center">
-          <NavLink href="/members" label="Members" />
-          <NavLink href="/lists" label="Lists" />
-          <NavLink href="/messages" label="Messages" />
+          {links.map((item) => (
+            <NavLink key={item.href} href={item.href} label={item.label} />
+          ))}
         </NavbarContent>
         <NavbarContent justify="end">
           {session?.user ? (

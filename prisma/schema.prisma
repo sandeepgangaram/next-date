@@ -41,6 +41,7 @@ model User {
   emailVerified DateTime? @map("email_verified")
   profileComplete Boolean @default(false)
   image         String?
+  role          Role      @default(MEMBER)
   accounts      Account[]
 
   member        Member?
@@ -114,4 +115,9 @@ model Like {
  enum TokenType {
   VERIFICATION
   PASSWORD_RESET
+ }
+
+ enum Role {
+  MEMBER
+  ADMIN
  }
