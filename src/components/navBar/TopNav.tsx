@@ -44,7 +44,7 @@ const TopNav = async () => {
           <GiRose size={40} className="text-gray-200" />
           <div className="font-bold text-3xl flex">
             <span className="text-gray-900">Next</span>
-            <span className="text-gray-200">Match</span>
+            <span className="text-gray-200">Date</span>
           </div>
         </NavbarBrand>
         <NavbarContent justify="center">
