@@ -73,6 +73,7 @@ model Photo {
   id String @id @default(cuid())
   url String
   publicId String?
+  isApproved Boolean @default(false)
 
   memberId String
 
